@@ -41,6 +41,11 @@
 
     <color name="outline">#79747E</color>
 
+    <!-- Aliases sans suffixe utilisés dans les layouts -->
+    <color name="surface">@color/surface_light</color>
+    <color name="onSurface">@color/onSurface_light</color>
+    <color name="onSurfaceVariant">@color/onSurfaceVariant_light</color>
+
     <!-- Glassmorphism & Effects -->
     <color name="glass_white">#B3FFFFFF</color>
     <color name="glass_dark">#B31A1A2E</color>

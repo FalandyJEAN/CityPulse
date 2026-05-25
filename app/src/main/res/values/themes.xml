@@ -40,12 +40,12 @@
     <!-- Splash Screen Theme -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/primary</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/Theme.CityPulse</item>
     </style>
 
     <!-- Navigation Styles -->
-    <style name="Widget.CityPulse.ActiveIndicator" parent="Widget.Material3.NavigationBar.ActiveIndicator">
+    <style name="Widget.CityPulse.ActiveIndicator" parent="">
         <item name="android:color">@color/primaryContainer</item>
     </style>
 

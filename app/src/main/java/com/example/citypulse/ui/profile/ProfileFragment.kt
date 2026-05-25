@@ -69,7 +69,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupSettingsItems() {
-        setupRow(binding.itemDarkMode, "Thème sombre", android.R.drawable.ic_menu_daynight, isSwitch = true) { isChecked ->
+        setupRow(binding.itemDarkMode, "Thème sombre", android.R.drawable.ic_menu_preferences, isSwitch = true) { isChecked ->
             val mode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             AppCompatDelegate.setDefaultNightMode(mode)
         }

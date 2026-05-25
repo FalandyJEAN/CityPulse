@@ -67,7 +67,7 @@
                         app:chipBackgroundColor="@drawable/chip_active_background"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
-                        app:textColor="@color/chip_text_color" />
+                        android:textColor="@color/chip_text_color" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_restaurants"
@@ -78,7 +78,7 @@
                         app:chipBackgroundColor="@drawable/chip_active_background"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
-                        app:textColor="@color/chip_text_color" />
+                        android:textColor="@color/chip_text_color" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_parks"
@@ -89,7 +89,7 @@
                         app:chipBackgroundColor="@drawable/chip_active_background"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
-                        app:textColor="@color/chip_text_color" />
+                        android:textColor="@color/chip_text_color" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_museums"
@@ -100,7 +100,7 @@
                         app:chipBackgroundColor="@drawable/chip_active_background"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
-                        app:textColor="@color/chip_text_color" />
+                        android:textColor="@color/chip_text_color" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_commerces"
@@ -111,7 +111,7 @@
                         app:chipBackgroundColor="@drawable/chip_active_background"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
-                        app:textColor="@color/chip_text_color" />
+                        android:textColor="@color/chip_text_color" />
 
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
@@ -177,7 +177,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Réessayer"
                 app:backgroundTint="@null"
-                app:backgroundResource="@drawable/gradient_primary" />
+                android:background="@drawable/gradient_primary" />
         </LinearLayout>
 
     </FrameLayout>

@@ -44,7 +44,7 @@
         android:contentDescription="Ma position"
         android:src="@android:drawable/ic_menu_mylocation"
         app:backgroundTint="@null"
-        app:backgroundResource="@drawable/gradient_primary"
+        android:background="@drawable/gradient_primary"
         app:tint="@color/white" />
 
     <!-- Inclusion de la BottomSheet Place Preview -->
