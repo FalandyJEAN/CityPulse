@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.citypulse.MainActivity
 import com.example.citypulse.R
@@ -66,11 +67,13 @@ class OnboardingActivity : AppCompatActivity() {
                 super.onPageSelected(position)
                 if (position == 2) {
                     binding.btnNext.text = "Commencer"
-                    binding.btnNext.setBackgroundResource(R.drawable.gradient_primary)
+                    binding.btnNext.backgroundTintList =
+                        ContextCompat.getColorStateList(this@OnboardingActivity, R.color.primary)
                     binding.btnNext.setTextColor(getColor(R.color.white))
                 } else {
                     binding.btnNext.text = "Suivant"
-                    binding.btnNext.setBackgroundColor(getColor(R.color.white))
+                    binding.btnNext.backgroundTintList =
+                        ContextCompat.getColorStateList(this@OnboardingActivity, R.color.white)
                     binding.btnNext.setTextColor(getColor(R.color.primary))
                 }
             }
