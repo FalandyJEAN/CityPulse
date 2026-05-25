@@ -102,10 +102,21 @@
                         app:chipStrokeColor="@color/primary"
                         app:textColor="@color/chip_text_color" />
 
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_commerces"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Commerces"
+                        app:chipBackgroundColor="@drawable/chip_active_background"
+                        app:chipSurfaceColor="@android:color/transparent"
+                        app:chipStrokeColor="@color/primary"
+                        app:textColor="@color/chip_text_color" />
+
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
         </LinearLayout>
-    </com.google.android.appbar.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

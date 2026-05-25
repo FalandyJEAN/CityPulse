@@ -10,18 +10,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.citypulse.R
 import com.example.citypulse.databinding.FragmentProfileBinding
 import com.example.citypulse.databinding.ItemSettingsRowBinding
+import com.example.citypulse.viewmodel.CityViewModel
+import com.example.citypulse.viewmodel.CityViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
-/**
- * Fragment de profil gérant les statistiques de l'utilisateur et les paramètres de l'application.
- */
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: CityViewModel by viewModels(
+        ownerProducer = { requireActivity() },
+        factoryProducer = { CityViewModelFactory(requireContext()) }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,21 +46,36 @@ class ProfileFragment : Fragment() {
 
         setupSettingsItems()
         setupListeners()
+        observeStats()
+    }
+
+    private fun observeStats() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.favorites.collect { favorites ->
+                    binding.tvStatFavorites.text = favorites.size.toString()
+                    val notesCount = favorites.count { !it.userNote.isNullOrBlank() }
+                    binding.tvStatNotes.text = notesCount.toString()
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.places.collect { places ->
+                    binding.tvStatVisited.text = places.size.toString()
+                }
+            }
+        }
     }
 
     private fun setupSettingsItems() {
-        // Mode Sombre
         setupRow(binding.itemDarkMode, "Thème sombre", android.R.drawable.ic_menu_daynight, isSwitch = true) { isChecked ->
             val mode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             AppCompatDelegate.setDefaultNightMode(mode)
         }
 
-        // Notifications
-        setupRow(binding.itemNotifications, "Notifications", android.R.drawable.ic_popup_reminder, isSwitch = true) { isChecked ->
-            // Logique de notification à implémenter
-        }
+        setupRow(binding.itemNotifications, "Notifications", android.R.drawable.ic_popup_reminder, isSwitch = true) { _ -> }
 
-        // Localisation
         setupRow(binding.itemLocation, "Localisation arrière-plan", android.R.drawable.ic_menu_mylocation, isSwitch = true) { isChecked ->
             if (isChecked) {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -61,12 +85,10 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        // Langue
         setupRow(binding.itemLanguage, "Langue", android.R.drawable.ic_menu_mapmode, value = "Français") {
             showLanguageDialog()
         }
 
-        // À propos
         setupRow(binding.itemAbout, "À propos", android.R.drawable.ic_menu_info_details) {
             showAboutDialog()
         }
@@ -88,7 +110,6 @@ class ProfileFragment : Fragment() {
                 switchSetting.visibility = View.VISIBLE
                 ivChevron.visibility = View.GONE
                 switchSetting.setOnCheckedChangeListener { _, isChecked -> onAction(isChecked) }
-                // Initialiser l'état du switch (ex: pour le thème sombre)
                 if (title == "Thème sombre") {
                     switchSetting.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
                 }
@@ -105,9 +126,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        binding.btnResetApp.setOnClickListener {
-            showResetConfirmation()
-        }
+        binding.btnResetApp.setOnClickListener { showResetConfirmation() }
     }
 
     private fun showLanguageDialog() {
@@ -123,7 +142,7 @@ class ProfileFragment : Fragment() {
     private fun showAboutDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("À propos de CityPulse")
-            .setMessage("Version 1.0.0\n\nDéveloppé avec ❤️ par l'équipe CityPulse :\n- Ruben Guerrier\n- [Votre Nom/Équipe]\n\nApplication native Kotlin - Material 3")
+            .setMessage("Version 1.0.0\n\nDéveloppé avec ❤️ par l'équipe CityPulse :\n- Ruben Guerrier\n- Falandy Jean\n\nApplication native Kotlin - Material 3")
             .setPositiveButton("Fermer", null)
             .show()
     }
@@ -134,10 +153,8 @@ class ProfileFragment : Fragment() {
             .setMessage("Cette action supprimera tous vos favoris et vos notes personnelles. Elle est irréversible.")
             .setNegativeButton("Annuler", null)
             .setPositiveButton("Réinitialiser") { _, _ ->
-                // Logique de reset (SharedPreferences + Database)
                 val sharedPref = requireActivity().getSharedPreferences("citypulse_prefs", Context.MODE_PRIVATE)
                 sharedPref.edit().clear().apply()
-                // Redémarrage ou retour à l'onboarding
                 requireActivity().finish()
             }
             .show()
