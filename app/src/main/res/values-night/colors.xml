@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Aliases adaptés au mode sombre -->
+    <color name="surface">@color/surface_dark</color>
+    <color name="onSurface">@color/onSurface_dark</color>
+    <color name="onSurfaceVariant">@color/onSurfaceVariant_dark</color>
+</resources>

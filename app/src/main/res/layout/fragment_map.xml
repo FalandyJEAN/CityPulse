@@ -43,8 +43,7 @@
         android:layout_marginBottom="100dp"
         android:contentDescription="Ma position"
         android:src="@android:drawable/ic_menu_mylocation"
-        app:backgroundTint="@null"
-        android:background="@drawable/gradient_primary"
+        app:backgroundTint="@color/primary"
         app:tint="@color/white" />
 
     <!-- Inclusion de la BottomSheet Place Preview -->

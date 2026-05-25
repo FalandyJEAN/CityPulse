@@ -8,13 +8,13 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.citypulse.R
 import com.example.citypulse.databinding.FragmentProfileBinding
 import com.example.citypulse.databinding.ItemSettingsRowBinding
 import com.example.citypulse.viewmodel.CityViewModel
@@ -32,6 +32,10 @@ class ProfileFragment : Fragment() {
         factoryProducer = { CityViewModelFactory(requireContext()) }
     )
 
+    private val prefs by lazy {
+        requireActivity().getSharedPreferences("citypulse_prefs", Context.MODE_PRIVATE)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,9 +48,55 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        loadUserProfile()
         setupSettingsItems()
         setupListeners()
         observeStats()
+
+        binding.avatarContainer.setOnClickListener { showEditNameDialog() }
+        binding.tvProfileName.setOnClickListener { showEditNameDialog() }
+    }
+
+    private fun loadUserProfile() {
+        val name = prefs.getString("user_name", null)
+        if (name.isNullOrBlank()) {
+            showEditNameDialog(firstTime = true)
+        } else {
+            updateProfileUI(name)
+        }
+    }
+
+    private fun updateProfileUI(name: String) {
+        binding.tvProfileName.text = name
+        val initials = name.trim()
+            .split("\\s+".toRegex())
+            .filter { it.isNotEmpty() }
+            .take(2)
+            .joinToString("") { it.first().uppercaseChar().toString() }
+        binding.tvProfileInitials.text = initials.ifEmpty { "?" }
+    }
+
+    private fun showEditNameDialog(firstTime: Boolean = false) {
+        val input = EditText(requireContext()).apply {
+            hint = "Prénom Nom"
+            setText(prefs.getString("user_name", ""))
+            setPadding(64, 32, 64, 32)
+        }
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(if (firstTime) "Bienvenue !" else "Modifier le profil")
+            .setMessage(if (firstTime) "Comment souhaitez-vous vous appeler ?" else null)
+            .setView(input)
+            .setPositiveButton("Confirmer") { _, _ ->
+                val name = input.text.toString().trim()
+                if (name.isNotBlank()) {
+                    prefs.edit().putString("user_name", name).apply()
+                    updateProfileUI(name)
+                }
+            }
+            .apply { if (!firstTime) setNegativeButton("Annuler", null) }
+            .setCancelable(!firstTime)
+            .show()
     }
 
     private fun observeStats() {
@@ -140,9 +190,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showAboutDialog() {
+        val name = prefs.getString("user_name", "l'équipe CityPulse") ?: "l'équipe CityPulse"
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("À propos de CityPulse")
-            .setMessage("Version 1.0.0\n\nDéveloppé avec ❤️ par l'équipe CityPulse :\n- Ruben Guerrier\n- Falandy Jean\n\nApplication native Kotlin - Material 3")
+            .setMessage("Version 1.0.0\n\nDéveloppé avec ❤️ par $name\n\nApplication native Kotlin - Material 3")
             .setPositiveButton("Fermer", null)
             .show()
     }
@@ -150,11 +201,10 @@ class ProfileFragment : Fragment() {
     private fun showResetConfirmation() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Réinitialiser l'application ?")
-            .setMessage("Cette action supprimera tous vos favoris et vos notes personnelles. Elle est irréversible.")
+            .setMessage("Cette action supprimera tous vos favoris, vos notes et votre profil. Elle est irréversible.")
             .setNegativeButton("Annuler", null)
             .setPositiveButton("Réinitialiser") { _, _ ->
-                val sharedPref = requireActivity().getSharedPreferences("citypulse_prefs", Context.MODE_PRIVATE)
-                sharedPref.edit().clear().apply()
+                prefs.edit().clear().apply()
                 requireActivity().finish()
             }
             .show()

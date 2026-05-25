@@ -64,7 +64,7 @@
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="Tous"
-                        app:chipBackgroundColor="@drawable/chip_active_background"
+                        app:chipBackgroundColor="@color/chip_bg_color"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
                         android:textColor="@color/chip_text_color" />
@@ -75,7 +75,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Restaurants"
-                        app:chipBackgroundColor="@drawable/chip_active_background"
+                        app:chipBackgroundColor="@color/chip_bg_color"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
                         android:textColor="@color/chip_text_color" />
@@ -86,7 +86,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Parcs"
-                        app:chipBackgroundColor="@drawable/chip_active_background"
+                        app:chipBackgroundColor="@color/chip_bg_color"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
                         android:textColor="@color/chip_text_color" />
@@ -97,7 +97,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Musées"
-                        app:chipBackgroundColor="@drawable/chip_active_background"
+                        app:chipBackgroundColor="@color/chip_bg_color"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
                         android:textColor="@color/chip_text_color" />
@@ -108,7 +108,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Commerces"
-                        app:chipBackgroundColor="@drawable/chip_active_background"
+                        app:chipBackgroundColor="@color/chip_bg_color"
                         app:chipSurfaceColor="@android:color/transparent"
                         app:chipStrokeColor="@color/primary"
                         android:textColor="@color/chip_text_color" />
@@ -176,8 +176,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Réessayer"
-                app:backgroundTint="@null"
-                android:background="@drawable/gradient_primary" />
+                app:backgroundTint="@color/primary" />
         </LinearLayout>
 
     </FrameLayout>

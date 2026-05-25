@@ -1,8 +1,11 @@
 package com.example.citypulse.ui.map
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,8 +49,14 @@ class MapFragment : Fragment() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted) setupLocationOverlay() else {
-            showPermissionDeniedMessage()
+        if (isGranted) {
+            setupLocationOverlay()
+        } else {
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showOpenSettingsMessage()
+            } else {
+                showPermissionDeniedMessage()
+            }
             centerOnDefaultLocation()
         }
     }
@@ -68,6 +77,7 @@ class MapFragment : Fragment() {
         setupBottomSheet()
         checkLocationPermission()
         observePlaces()
+        observeLoadEvents()
 
         binding.fabMyLocation.setOnClickListener {
             if (::locationOverlay.isInitialized && locationOverlay.isMyLocationEnabled) {
@@ -119,6 +129,27 @@ class MapFragment : Fragment() {
         }
     }
 
+    private fun observeLoadEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.events.collect { state ->
+                    val msg = when (state) {
+                        is CityViewModel.LoadState.Success ->
+                            "${state.count} lieux Google chargés à proximité"
+                        is CityViewModel.LoadState.Empty ->
+                            "Aucun lieu Google trouvé autour de vous"
+                        is CityViewModel.LoadState.Error ->
+                            "Erreur Google Places : ${state.message}"
+                        CityViewModel.LoadState.MissingKey ->
+                            "Clé Google Places manquante (local.properties)"
+                        else -> null
+                    }
+                    msg?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
+                }
+            }
+        }
+    }
+
     private fun refreshMarkers(places: List<Place>) {
         binding.mapView.overlays.removeAll(
             binding.mapView.overlays.filterIsInstance<Marker>()
@@ -156,8 +187,20 @@ class MapFragment : Fragment() {
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> setupLocationOverlay()
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) ->
+                showRationaleAndRequest()
             else -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
+
+    private fun showRationaleAndRequest() {
+        Snackbar.make(
+            binding.root,
+            "CityPulse a besoin de votre position pour afficher les lieux Google autour de vous.",
+            Snackbar.LENGTH_INDEFINITE
+        ).setAction("Autoriser") {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }.show()
     }
 
     private fun setupLocationOverlay() {
@@ -167,8 +210,10 @@ class MapFragment : Fragment() {
         binding.mapView.overlays.add(locationOverlay)
 
         locationOverlay.runOnFirstFix {
+            val loc = locationOverlay.myLocation ?: return@runOnFirstFix
             activity?.runOnUiThread {
-                binding.mapView.controller.animateTo(locationOverlay.myLocation)
+                binding.mapView.controller.animateTo(loc)
+                viewModel.loadNearbyPlaces(loc.latitude, loc.longitude)
             }
         }
     }
@@ -184,6 +229,19 @@ class MapFragment : Fragment() {
             "La localisation est nécessaire pour afficher votre position sur la carte.",
             Snackbar.LENGTH_LONG
         ).setAction("Réessayer") { checkLocationPermission() }.show()
+    }
+
+    private fun showOpenSettingsMessage() {
+        Snackbar.make(
+            binding.root,
+            "Permission refusée. Activez-la dans les paramètres pour utiliser Google Places.",
+            Snackbar.LENGTH_LONG
+        ).setAction("Paramètres") {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", requireContext().packageName, null)
+            }
+            startActivity(intent)
+        }.show()
     }
 
     private fun showPlacePreview(name: String, category: String) {

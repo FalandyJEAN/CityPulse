@@ -63,3 +63,24 @@ est réalisée par chaque étudiant concerné.
 ## Logique Métier 
 - J'ai utilisé l'IA pour m'aider à comprendre l'architecture MVVM et à structurer mes dossiers dans Android Studio. 
 - L'IA m'a fourni les bases de code pour le Repository (gestion du mode hors-ligne), le ViewModel (calcul de distance et filtrage) et l'implémentation du partage via Intent implicite.
+
+---
+
+## Session 2 — Corrections et intégration Google Places
+
+### Tâche 1 : Correction du crash onglet "Lieux"
+**Instruction :** "lorsque je clique sur lieux, l'app se crashe"  
+**Diagnostic :** `res/color/chip_text_color.xml` avait `<resources><selector>` — format invalide pour un color state list (le root doit être `<selector>` directement).  
+**Correction :** suppression de la balise `<resources>` englobante.
+
+### Tâche 2 : Intégration Google Places API (vrais lieux)
+**Instruction :** utiliser une clé API Google pour afficher de vrais lieux géolocalisés.  
+**Travail de l'agent :**
+- Clé stockée dans `local.properties` + exposée via `BuildConfig` (jamais committée)
+- Création `data/remote/GooglePlacesApi.kt`, `PlacesModels.kt`, `RetrofitClient.kt`
+- `PlaceRepository` : fetch Nearby Search, mapping vers `Place`, nettoyage Room
+- `CityViewModel` : méthode `loadNearbyPlaces(lat, lon)`
+- `MapFragment` : déclenchement au premier fix GPS
+
+### Tâche 3 : Mise à jour AGENTS.md
+**Instruction :** compléter ce fichier avec les nouvelles tâches de la session.
