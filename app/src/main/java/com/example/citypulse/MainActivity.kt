@@ -36,8 +36,17 @@ class MainActivity : AppCompatActivity() {
         requestPostNotificationsIfNeeded()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            val sys = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.setPadding(sys.left, sys.top, sys.right, sys.bottom)
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation) { v, insets ->
+            val sys = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val lp = v.layoutParams as android.view.ViewGroup.MarginLayoutParams
+            lp.bottomMargin = sys.bottom + (16 * resources.displayMetrics.density).toInt()
+            v.layoutParams = lp
             insets
         }
     }
